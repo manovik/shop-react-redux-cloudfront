@@ -23,7 +23,7 @@ frameworkVersion: '2'
 provider:
   name: aws
   runtime: nodejs12.x
-  lambdaHashingVersion: 20201221
+  # lambdaHashingVersion: 20201221
 
 # you can overwrite defaults here
 #  stage: dev
@@ -63,8 +63,9 @@ plugins:
  
 custom:
   client:
-    bucketName: manovik-shop-pine
-    distributionFolder: "./build"
+    # bucketName: manovik-shop-pine
+    bucketName: shop-manual-deploy
+    distributionFolder: build
   s3Bucket: ${self:custom.client.bucketName}
 
 # functions:

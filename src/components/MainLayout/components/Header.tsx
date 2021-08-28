@@ -12,8 +12,11 @@ import {Link} from 'react-router-dom';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    top: {
+      backgroundColor: '#2b7e05'
+    },
     root: {
-      flexGrow: 1,
+      flexGrow: 1
     },
     menuButton: {
       marginRight: theme.spacing(2),
@@ -23,7 +26,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     homeLink: {
       color: 'white',
-      textDecoration: 'none'
+      textDecoration: 'none',
     }
   }),
 );
@@ -43,7 +46,7 @@ export default function Header() {
   };
 
   return (
-    <AppBar position="relative">
+    <AppBar position="relative" className={classes.top}>
       <Toolbar>
         <Typography variant="h6" className={classes.title}>
           <Link className={classes.homeLink} to="/">PinApple</Link>
