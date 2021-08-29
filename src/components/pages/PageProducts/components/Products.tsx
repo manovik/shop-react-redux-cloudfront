@@ -3,6 +3,7 @@ import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
+import Pagination from '@material-ui/lab/Pagination';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
@@ -29,26 +30,58 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.background.paper,
     padding: theme.spacing(6),
   },
+  pagination: {
+    marginTop: '1em',
+  },
 }));
 
 export default function Products() {
   const classes = useStyles();
+
   const [products, setProducts] = useState<Product[]>([]);
+  const [productsToShow, setProductsToShow] = useState<Product[]>([]);
   const [loader, setLoader] = useState(true);
+  const [page, setPage] = useState(1);
+
+  const productsOnPage = 20;
 
   useEffect(() => {
     axios.get(`${API_PATHS.bff}`).then((res) => {
-      setProducts(res.data.product.slice(0, 30));
-      setLoader(false);
+      setProducts(res.data.product);
+      setLoader(false)
     });
   }, []);
+
+  useEffect(() => {
+      setProductsToShow(products.slice(0, productsOnPage));
+    }, [products]);
+    
+    useEffect(() => {
+      scrollPageUp();
+      setProductsToShow(products.slice(productsOnPage * (page - 1), productsOnPage * page));
+      // eslint-disable-next-line
+  }, [page])
+
+
+  const handleSetPage = (num: number) => {
+    setPage(num);
+  };
+
+  const scrollPageUp = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  }
+
+  const countPages = () => Math.ceil(products.length / productsOnPage)
 
   return (
     <Grid container spacing={4}>
       {loader ? (
         <Loader />
       ) : (
-        products.map((product: Product) => {
+        productsToShow.map((product: Product) => {
           return (
             <Grid item key={product.id} xs={12} sm={6} md={4}>
               <Card className={classes.card}>
@@ -71,6 +104,15 @@ export default function Products() {
           );
         })
       )}
+      <div className={classes.pagination}>
+        <Pagination
+          count={countPages()}
+          page={page}
+          variant="outlined"
+          shape="rounded"
+          onChange={(e, number) => handleSetPage(number)}
+        />
+      </div>
     </Grid>
   );
 }
