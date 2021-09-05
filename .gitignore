@@ -11,6 +11,7 @@ node_modules
 # production
 build
 .serverless
+.serverless_plugins
 
 # package directories
 jspm_packages
