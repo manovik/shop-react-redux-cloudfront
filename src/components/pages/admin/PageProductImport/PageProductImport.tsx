@@ -15,6 +15,8 @@ const useStyles = makeStyles((theme) => ({
 
 export default function PageProductImport() {
   const classes = useStyles();
+  localStorage.setItem('user', 'manovik');
+  localStorage.setItem('pass', 'TEST_PASSWORD');
 
   return (
     <div className={classes.content}>
