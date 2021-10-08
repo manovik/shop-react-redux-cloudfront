@@ -58,19 +58,31 @@ const Form = (props: FormikProps<FormikValues>) => {
             required
           />
         </Grid>
-        <Grid item xs={12} sm={4}>
+        <Grid item xs={12}>
           <Field
             component={TextField}
-            name="price"
-            label="Price ($)"
+            name="image_link"
+            label="Image link"
             fullWidth
             autoComplete="off"
             required
           />
         </Grid>
-        <Grid item xs={12} sm={4}>
+        <Grid item xs={12} sm={6}>
           <Field
             component={TextField}
+            type="number"
+            name="price"
+            label="Price ($)"
+            fullWidth
+            autoComplete="off"
+            required
+            />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <Field
+            component={TextField}
+            type="number"
             name="count"
             label="Count"
             fullWidth
@@ -78,7 +90,7 @@ const Form = (props: FormikProps<FormikValues>) => {
             required
           />
         </Grid>
-        <Grid item container xs={12} justify="space-between">
+        <Grid item container xs={12} justifyContent="space-between">
           <Button
             color="primary"
           >
@@ -109,7 +121,9 @@ export default function PageProductForm() {
   const onSubmit = (values: FormikValues) => {
     const formattedValues = ProductSchema.cast(values);
     const productToSave = id ? {...ProductSchema.cast(formattedValues), id} : formattedValues;
-    axios.put(`${API_PATHS.bff}/product`, productToSave)
+    console.log({productToSave});
+    
+    axios.put(`${API_PATHS.bff}`, productToSave)
       .then(() => history.push('/admin/products'));
   };
 
@@ -118,15 +132,16 @@ export default function PageProductForm() {
       setIsLoading(false);
       return;
     }
-    axios.get(`${API_PATHS.bff}/product/${id}`)
+    axios.get(`${API_PATHS.bff}/${id}`)
       .then(res => {
-        setProduct(res.data);
+        
+        setProduct(res.data.product[0]);
         setIsLoading(false);
       });
   }, [id])
 
   if (isLoading) return <p>loading...</p>;
-
+  
   return (
     <PaperLayout>
       <Typography component="h1" variant="h4" align="center">
@@ -136,6 +151,7 @@ export default function PageProductForm() {
         initialValues={product || emptyValues}
         validationSchema={ProductSchema}
         onSubmit={onSubmit}
+        validateOnChange={false}
       >
         {(props: FormikProps<FormikValues>) => <Form {...props} />}
       </Formik>
