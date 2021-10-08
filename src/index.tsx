@@ -22,12 +22,10 @@ axios.interceptors.response.use(
 );
 
 ReactDOM.render(
-  <React.StrictMode>
     <Provider store={store}>
       <CssBaseline/>
       <App/>
-    </Provider>
-  </React.StrictMode>,
+    </Provider>,
   document.getElementById('root')
 );
 

@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 import API_PATHS from "constants/apiPaths";
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -10,22 +10,23 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Button from "@material-ui/core/Button";
-import {formatAsPrice} from "utils/utils";
+import { formatAsPrice } from "utils/utils";
+import { Avatar } from '@material-ui/core';
 
 export default function ProductsTable() {
   const [products, setProducts] = useState<any>([]);
 
   useEffect(() => {
-    axios.get(`${API_PATHS.bff}/product`)
-      .then(res => setProducts(res.data));
+    axios.get(`${API_PATHS.bff}`)
+      .then(res => setProducts(res.data.product));
   }, []);
 
   const onDelete = (id: string) => {
-    axios.delete(`${API_PATHS.bff}/product/${id}`)
+    axios.delete(`${API_PATHS.bff}/${id}`)
       .then(() => {
-        axios.get(`${API_PATHS.bff}/product`)
-          .then(res => setProducts(res.data));
-        }
+        axios.get(`${API_PATHS.bff}`)
+          .then(res => setProducts(res.data.product));
+      }
       );
   };
 
@@ -39,6 +40,7 @@ export default function ProductsTable() {
             <TableCell align="right">Description</TableCell>
             <TableCell align="right">Price</TableCell>
             <TableCell align="right">Count</TableCell>
+            <TableCell align="right">Image</TableCell>
             <TableCell align="right">Action</TableCell>
           </TableRow>
         </TableHead>
@@ -51,6 +53,9 @@ export default function ProductsTable() {
               <TableCell align="right">{product.description}</TableCell>
               <TableCell align="right">{formatAsPrice(product.price)}</TableCell>
               <TableCell align="right">{product.count}</TableCell>
+              <TableCell align="center">
+                <Avatar alt={product.description} src={product.image_link} variant="rounded"/>
+              </TableCell>
               <TableCell align="right">
                 <Button size="small" color="primary" component={Link} to={`/admin/product-form/${product.id}`}>
                   Manage
