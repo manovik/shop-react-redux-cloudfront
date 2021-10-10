@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import Typography from "@material-ui/core/Typography";
 import axios from 'axios';
@@ -15,13 +15,10 @@ type CSVFileImportProps = {
 };
 
 export default function CSVFileImport({url, title}: CSVFileImportProps) {
-  const user = localStorage.getItem('user');
-  const pass = localStorage.getItem('pass');
-  const token = btoa(`${user}:${pass}`);
-  localStorage.setItem('authorization_token', token);
 
   const classes = useStyles();
   const [file, setFile] = useState<any>();
+  const [access, setAccess] = useState<boolean>(false);
 
   const onFileChange = (e: any) => {
     let files = e.target.files || e.dataTransfer.files
@@ -34,29 +31,35 @@ export default function CSVFileImport({url, title}: CSVFileImportProps) {
   };
 
   const uploadFile = async (e: any) => {
-      // Get the presigned URL
-      const token = localStorage.getItem('authorization_token');
-      const response = await axios({
+    // Get the presigned URL
+    const token = localStorage.getItem('authorization_token');
+    const headers = token ? { 'Authorization': token } : {};
+    const response = await axios({
         method: 'GET',
         url,
         params: {
           name: encodeURIComponent(file.name)
         },
-        headers: {
-          'Authorization': token
-        }
+        headers,
+      }).then((d) => {
+        setAccess(true);
+        return d;
       });
+
+    console.log({response});
+    if (access) {
       console.log('File to upload: ', file.name)
-      console.log('Uploading to: ', response.data)
-      const result = await fetch(response.data, {
+      console.log('Uploading to: ', response?.data)
+      const result = await fetch(response?.data, {
         method: 'PUT',
         headers: { 'Content-type': 'text/csv' },
         body: file
-      })
+      });
       console.log('Result: ', result)
       setFile('');
+      setAccess(false);
     }
-  ;
+  };
 
   return (
     <div className={classes.content}>

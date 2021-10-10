@@ -44,7 +44,7 @@ export default function Products() {
   const [page, setPage] = useState(1);
   const [pageCount, setPageCount] = useState(0);
 
-  const productsOnPage = 6;
+  const productsOnPage = 9;
 
   useEffect(() => {
     axios.get(`${API_PATHS.bff}`).then((res) => {
@@ -94,7 +94,7 @@ export default function Products() {
                     <CardMedia
                       className={classes.cardMedia}
                       image={product.image_link}
-                      title={product.title}
+                      title={product.description}
                     />
                     <CardContent className={classes.cardContent}>
                       <Typography gutterBottom variant="h5" component="h2">
@@ -121,6 +121,8 @@ export default function Products() {
             variant="outlined"
             shape="rounded"
             onChange={(e, number) => handleSetPage(number)}
+            hidePrevButton={page === 1}
+            hideNextButton={page === pageCount}
           />
         </div>
         : <></>

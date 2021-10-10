@@ -25,7 +25,7 @@ export default function ProductsTable() {
     axios.delete(`${API_PATHS.bff}/${id}`)
       .then(() => {
         axios.get(`${API_PATHS.bff}`)
-          .then(res => setProducts(res.data.product));
+          .then(res => setProducts(res?.data?.product));
       }
       );
   };

@@ -9,11 +9,17 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import Cart from "components/MainLayout/components/Cart";
 import {Link} from 'react-router-dom';
+import headerImage from './2eea2e024d3f9b541c37eddb6984a582.png'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     top: {
-      backgroundColor: '#2b7e05'
+      backgroundImage: `url(${headerImage})`,
+      backgroundPositionY: '65%',
+      backgroundSize: 'cover'
+    },
+    topInner: {
+      backgroundColor: 'rgba(0,0,0,.4)'
     },
     root: {
       flexGrow: 1
@@ -47,7 +53,7 @@ export default function Header() {
 
   return (
     <AppBar position="relative" className={classes.top}>
-      <Toolbar>
+      <Toolbar className={classes.topInner}>
         <Typography variant="h6" className={classes.title}>
           <Link className={classes.homeLink} to="/">PinApple</Link>
         </Typography>

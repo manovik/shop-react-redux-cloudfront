@@ -4,6 +4,7 @@ import {makeStyles} from '@material-ui/core/styles';
 import Link from '@material-ui/core/Link';
 import Container from "@material-ui/core/Container";
 import Header from "components/MainLayout/components/Header";
+import bg from './01e1b13fc19eee0794baea237b12642d.png';
 
 function Copyright() {
   return (
@@ -20,11 +21,15 @@ function Copyright() {
 
 const useStyles = makeStyles((theme) => ({
   main: {
-    flex: '1 0 auto'
+    flex: '1 0 auto',
+    backgroundImage: `url(${bg})`,
+    backgroundRepeat: 'repeat-y',
+    backgroundSize: 'contain'
   },
   container: {
     paddingBottom: theme.spacing(8),
-    height: '100%'
+    height: '100%',
+    backgroundColor: 'rgba(255,255,255,0.8)'
   },
   footer: {
     backgroundColor: theme.palette.background.paper,
