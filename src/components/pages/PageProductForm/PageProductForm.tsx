@@ -122,8 +122,9 @@ export default function PageProductForm() {
     const formattedValues = ProductSchema.cast(values);
     const productToSave = id ? {...ProductSchema.cast(formattedValues), id} : formattedValues;
     console.log({productToSave});
-    
-    axios.put(`${API_PATHS.bff}`, {updateProduct: productToSave})
+    const products = id ? {updateProduct: productToSave} : {postProduct: productToSave};
+
+    axios[ id ? 'put' : 'post' ](`${API_PATHS.bff}`, products)
       .then(() => history.push('/admin/products'));
   };
 
