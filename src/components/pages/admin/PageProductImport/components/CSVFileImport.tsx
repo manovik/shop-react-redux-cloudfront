@@ -18,7 +18,6 @@ export default function CSVFileImport({url, title}: CSVFileImportProps) {
 
   const classes = useStyles();
   const [file, setFile] = useState<any>();
-  const [access, setAccess] = useState<boolean>(false);
 
   const onFileChange = (e: any) => {
     let files = e.target.files || e.dataTransfer.files
@@ -41,24 +40,18 @@ export default function CSVFileImport({url, title}: CSVFileImportProps) {
           name: encodeURIComponent(file.name)
         },
         headers,
-      }).then((d) => {
-        setAccess(true);
-        return d;
       });
 
     console.log({response});
-    if (access) {
-      console.log('File to upload: ', file.name)
-      console.log('Uploading to: ', response?.data)
-      const result = await fetch(response?.data, {
-        method: 'PUT',
-        headers: { 'Content-type': 'text/csv' },
-        body: file
-      });
-      console.log('Result: ', result)
-      setFile('');
-      setAccess(false);
-    }
+    console.log('File to upload: ', file.name)
+    console.log('Uploading to: ', response?.data)
+    const result = await fetch(response?.data, {
+      method: 'PUT',
+      headers: { 'Content-type': 'text/csv' },
+      body: file
+    });
+    console.log('Result: ', result)
+    setFile('');
   };
 
   return (
