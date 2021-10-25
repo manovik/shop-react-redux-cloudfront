@@ -127,6 +127,7 @@ export default function PageOrder() {
         setOrder(order);
         setCartItems(cartItems);
         setIsLoading(false);
+        console.log(cartItems)
       });
   }, [id])
 

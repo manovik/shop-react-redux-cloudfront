@@ -102,22 +102,34 @@ const renderForm = () => (
   </>
 );
 
-export default function PageCart() {
-  const classes = useStyles();
-  const [activeStep, setActiveStep] = React.useState<number>(0);
+const RenderCartForm = ({
+  setAddress,
+  setActiveStep,
+  address,
+  activeStep,
+  classes
+}: {
+  setAddress: React.Dispatch<React.SetStateAction<FormikValues>>,
+  setActiveStep: React.Dispatch<React.SetStateAction<number>>,
+  address: FormikValues,
+  activeStep: number,
+  classes: any
+}) => {
   const cartItems = useSelector(selectCartItems);
-  const isCartEmpty = !cartItems.length;
-  const [address, setAddress] = useState<FormikValues>(initialAddressValues);
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
-  const dispatch = useDispatch();
+
+  const dispatch = useDispatch();  
+  const isCartEmpty = !cartItems.length;
 
   const handleNext = () => {
     setActiveStep(activeStep + 1);
     if (activeStep === 2) {
       const formattedValues = OrderSchema.cast({
-        items: cartItems.map(i => ({productId: i.product.id, count: i.count})),
+        items: cartItems.map((i) => ({productId: i.product.id, count: i.count})),
         address
       });
+      console.log('formattedValues\n', formattedValues);
+      
       axios.put(`${API_PATHS.order}/order`, formattedValues)
         .then(() => {
           dispatch(clearCart());
@@ -129,6 +141,55 @@ export default function PageCart() {
   const handleBack = () => {
     setActiveStep(activeStep - 1);
   };
+  return (
+  <>
+  <Formik
+    enableReinitialize={false}
+    initialValues={initialAddressValues}
+    validationSchema={AddressSchema}
+    validateOnMount={false}
+    onSubmit={() => undefined}
+  >
+    {(props: FormikProps<FormikValues>) => {
+      const {values, isValid} = props;
+      setAddress(values);
+      setIsFormValid(isValid);
+      return (
+        <Form>
+          {isCartEmpty && activeStep === 0 && <CartIsEmpty/>}
+          {activeStep === 0 && !isCartEmpty && <ReviewCart/>}
+          {activeStep === 1 && renderForm()}
+          {activeStep === 2 && <ReviewOrder address={address} items={cartItems}/>}
+          {activeStep === 3 && <Success/>}
+        </Form>
+      )
+    }}
+  </Formik>
+
+  {activeStep <= 2 && <div className={classes.buttons}>
+    {activeStep !== 0 && (
+      <Button onClick={handleBack} className={classes.button}>
+        Back
+      </Button>
+    )}
+    {!isCartEmpty && (
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleNext}
+        className={classes.button}
+        disabled={activeStep === 1 && !isFormValid}
+      >
+        {activeStep === steps.length - 1 ? 'Place order' : 'Next'}
+      </Button>)}
+  </div>}
+</>
+)}
+
+export default function PageCart() {
+  const classes = useStyles();
+  const [activeStep, setActiveStep] = React.useState<number>(0);
+  const [address, setAddress] = useState<FormikValues>(initialAddressValues);
 
   return (
     <PaperLayout>
@@ -142,48 +203,13 @@ export default function PageCart() {
           </Step>
         ))}
       </Stepper>
-      <React.Fragment>
-        <Formik
-          enableReinitialize={false}
-          initialValues={initialAddressValues}
-          validationSchema={AddressSchema}
-          isInitialValid={false}
-          onSubmit={() => undefined}
-        >
-          {(props: FormikProps<FormikValues>) => {
-            const {values, isValid} = props;
-            setAddress(values);
-            setIsFormValid(isValid);
-            return (
-              <Form>
-                {isCartEmpty && activeStep === 0 && <CartIsEmpty/>}
-                {activeStep === 0 && !isCartEmpty && <ReviewCart/>}
-                {activeStep === 1 && renderForm()}
-                {activeStep === 2 && <ReviewOrder address={address} items={cartItems}/>}
-                {activeStep === 3 && <Success/>}
-              </Form>
-            )
-          }}
-        </Formik>
-
-        {activeStep <= 2 && <div className={classes.buttons}>
-          {activeStep !== 0 && (
-            <Button onClick={handleBack} className={classes.button}>
-              Back
-            </Button>
-          )}
-          {!isCartEmpty && (
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleNext}
-              className={classes.button}
-              disabled={activeStep === 1 && !isFormValid}
-            >
-              {activeStep === steps.length - 1 ? 'Place order' : 'Next'}
-            </Button>)}
-        </div>}
-      </React.Fragment>
+      <RenderCartForm
+        setAddress={setAddress}
+        setActiveStep={setActiveStep}
+        address={address}
+        activeStep={activeStep}
+        classes={classes}
+      />
     </PaperLayout>
   );
 }
